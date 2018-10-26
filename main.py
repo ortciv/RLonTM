@@ -6,7 +6,7 @@ from Partition import Partition
 import copy
 def simulate(total_density, total_af, wFile):
 
-	repeat_times = 100000
+	repeat_times = 1000000
 	#repeat_times = 1	
 	schedulers = []
 
@@ -19,8 +19,8 @@ def simulate(total_density, total_af, wFile):
 	schedulability = [0 for k in range(len(schedulers))]
 
 	for i in range(repeat_times):
-		if i%10000==0:
-			print '10000 repeats made'
+		if i%100000==0:
+			print '100000 repeats made'
 		g = Generation()
 #		task_list = g.generate_tasks(total_density, True)
 		task_list = g.generate_tasks(total_density, False)
