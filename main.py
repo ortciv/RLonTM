@@ -6,7 +6,7 @@ from Partition import Partition
 import copy
 def simulate(total_density, total_af, wFile):
 
-	repeat_times = 1000000
+	repeat_times = 10000
 	#repeat_times = 1	
 	schedulers = []
 
