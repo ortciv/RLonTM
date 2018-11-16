@@ -3,7 +3,7 @@ from Partition import Partition
 from Scheduler import Scheduler
 import logging
 class Model:
-	def __init__(self, scheduler, task_list, partition_list):
+	def __init__(self):
 		'''
 		Args:
 			--scheduler: type Scheduler, takes in the scheduler 
@@ -11,9 +11,8 @@ class Model:
 			--partition_list, type dict of partitions, the index of a partition is its id
 			--sch_util, type float, total utilization of tasks scheduled successfully
 		'''
-		self._scheduler = scheduler
-		self._task_list = task_list
-		self._partition_list = partition_list
+		self._task_list = []
+		self._partition_list = []
 		#print type(self._partition_list)
 		self._is_schedulable = True
 		self._total_util = 0
@@ -23,14 +22,25 @@ class Model:
 		self._total_val = 0
 		self._sch_val = 0
 		self._state_now = []
-		for _,p in partition_list.items(): #needs to use a way to enumerate the dict!!! partition_list is a list!!
-			self._state_now.append(p._af)
-		self._state_now.append(0)#the last one is the task passed in.
+
 		self._critical_time = []
 		self._mapping = {} #mapping is used to record the  map from task to partition
 		self._to_leave_tasks = [] #records the tasks that will leave, it should be sorted by the leaving time
+		self._task_counter = 0
+		self._leaving_counter = 0
+		self._time_now = 0 #did not consider the extreme conditions where no tasks are passed.
 
+
+	def reset(self, task_list, partition_list):
+		self.__init__()
 		#extract arrival and leaving time and sort them
+		self._task_list = task_list
+		self._partition_list = partition_list
+		for _,p in self._partition_list.items(): #needs to use a way to enumerate the dict!!! partition_list is a list!!
+			self._state_now.append(p._af)
+			p._af_remain = p._af
+
+		self._state_now.append(0)#the last one is the task passed in.
 		for task in self._task_list:
 			self._critical_time.append(task._arrival)
 			if task._leaving>0:
@@ -41,13 +51,8 @@ class Model:
 		self._task_list.sort(key = lambda x: x._arrival) #sort task_list by the arrival time
 	
 		#execute to the first place where an action is needed, since no arrival leads to no leaving, so just initialize the counters
-		self._task_counter = 0
-		self._leaving_counter = 0
-		self._time_now = 0#did not consider the extreme conditions where no tasks are passed.
+		
 		self._state_now[len(self._state_now)-1] = self._task_list[self._task_counter]._utilization
-
-	def reset(self, scheduler, task_list, partition_list):
-		self.__init__(self, scheduler, task_list, partition_list)
 		return self._state_now
 
 	def handle_leaving(self):
