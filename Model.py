@@ -11,6 +11,7 @@ class Model:
 			--partition_list, type dict of partitions, the index of a partition is its id
 			--sch_util, type float, total utilization of tasks scheduled successfully
 		'''
+		self._scheduler = Scheduler('best_fit')
 		self._task_list = []
 		self._partition_list = []
 		#print type(self._partition_list)
@@ -49,7 +50,12 @@ class Model:
 		self._critical_time.sort()#get rid of duplicates and sort
 
 		self._task_list.sort(key = lambda x: x._arrival) #sort task_list by the arrival time
-	
+		
+		for task_now in self._task_list:
+			self._total_num += 1
+			self._total_val += task_now._value
+			self._total_util += task_now._utilization
+
 		#execute to the first place where an action is needed, since no arrival leads to no leaving, so just initialize the counters
 		
 		self._state_now[len(self._state_now)-1] = self._task_list[self._task_counter]._utilization
@@ -72,16 +78,23 @@ class Model:
 	#accomplish the action, return the reward and continue the actions until next action required.
 	def step(self, action):
 		if action<0 or action>len(self._partition_list):
-			return self._state_now, -10, True, "Ends" #illegal inputs
+			return self._state_now, -1, True, "Ends" #illegal inputs
 		task_now = self._task_list[self._task_counter]
-		self._total_num += 1
-		self._total_val += task_now._value
-		self._total_util += task_now._utilization
+
 		reward = 0
 		if self._partition_list[action]._af_remain < task_now._utilization:
-			reward = -1 #should we punish a non-fittable choice?
+			reward = -5 #should we punish a non-fittable choice?
+			message = "A non-fittable choice is made."
+			#print message
+			return self._state_now, reward, True, message
 		else:
-			reward = 1 #same value for each task now
+			bf_choice = self._scheduler.schedule(task_now, self._partition_list)
+			#print str(self._state_now) + ':  '+str(action)
+			if bf_choice == action:
+				reward = 1 #same value for each task now
+			else:
+				reward = -1
+			message = 'Task assigned to'+str(action)
 			self._mapping[task_now._id] = action
 			self._partition_list[action]._af_remain -= task_now._utilization
 			self._state_now[action] = self._partition_list[action]._af_remain
@@ -95,19 +108,21 @@ class Model:
 		self._task_counter += 1
 		#handle the situation where task_counter reaches the end here
 		if self._task_counter >=len(self._task_list):
+			#print 'Done  '+str(len(self._task_list))
 			done = True
+			message = 'Ends'
 			while self._time_now < len(self._critical_time):
 				self.handle_leaving()
 				self._time_now += 1
 			self._state_now[len(self._state_now)-1] = 0#end the process, set the task utilization as 0
-			return self._state_now, reward, done, "Ends"
+			return self._state_now, reward, done, message
 		else:
 			while self._task_list[self._task_counter]._arrival > self._critical_time[self._time_now]:
 				self.handle_leaving()
 				self._time_now += 1
 			self._state_now[len(self._state_now)-1] = self._task_list[self._task_counter]._utilization
 			done = False
-			return self._state_now, reward, done, "Continues"
+			return self._state_now, reward, done, message
 
 
 

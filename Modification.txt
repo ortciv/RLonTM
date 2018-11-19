@@ -11,3 +11,4 @@ KEY PROBLEM:
     Set partition set as fixed for now. Give different task set in and give rewards based on the best fit first; (version 1 in Q-Learning)
 2. Put run_model into step mode: one step a time
 3. put critical_time and mapping all into the member of the class. Make a step function that takes in the action instead of the scheduler
+4. Find a way to export the final result so as to test (some discussions).
