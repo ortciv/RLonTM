@@ -6,4 +6,7 @@ List of documents:
 - Scheduler.py:           Intermediate class that can load scheduling policies.
 - SchedulingPolicies.py:  Class that holds all sorts of scheduling policies.
 - Model.py:               The main part of the simulation, can run the the simulation when settings are given.
-- Main.py:                A sample showing how to utilize the core classes to run the simulation.
+- env.py:                 The class that provides the environment for the reinforcement learning.
+- Q-Learning.py:          The main of the project. Applying Q-Learning on the environment provided for the task-mapping problem.
+
+Reference used for Q-Learning: https://keon.io/deep-q-learning/
