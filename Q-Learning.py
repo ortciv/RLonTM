@@ -9,7 +9,8 @@ from env import TMSimEnv
 from Partition import Partition
 from Task import Task
 from Generation import Generation
-EPISODES = 1000
+from keras.models import load_model
+EPISODES = 100000
 
 class DQNAgent:
     def __init__(self, state_size, action_size):
@@ -69,6 +70,7 @@ if __name__ == "__main__":
     #     partition_list[i]=Partition(i, 0.2*(i+1))
     g = Generation()
     partition_list =g.generate_partitions(20)
+    print 'Number of partitions:'+str(len(partition_list))
     env.make(partition_list, 0.6)
     state_size = env.get_state_size()
     action_size = env.get_action_size()
@@ -77,22 +79,38 @@ if __name__ == "__main__":
     done = False
     batch_size = 32
 
+
+
+    wFile = open('Result_Diff_Task.txt','w')
     for e in range(EPISODES):
         state = env.reset()
+        r = 0
         state = np.reshape(state, [1, state_size])
         for time in range(500):
             # env.render()
             action = agent.act(state)
-            next_state, reward, done, _ = env.step(action)
-            reward = reward if not done else -10
+            next_state, reward, done, m = env.step(action)
+            #print m
+            #print m+' and the reward is: '+str(reward)
+            r += reward
             next_state = np.reshape(next_state, [1, state_size])
             agent.remember(state, action, reward, next_state, done)
             state = next_state
             if done:
-                print("episode: {}/{}, score: {}, e: {:.2}"
-                      .format(e, EPISODES, time, agent.epsilon))
+
+                print("episode: {}/{}, score: {}, e: {:.5}"
+                      .format(e, EPISODES, r, agent.epsilon))
+                model_result = env.get_unit_ratio()
+                print "Unit ratio provided by the model:"+str(model_result)
+                bf_result = env.simulate_best_fit()
+                print "Unit ratio provided by Best-Fit: "+str(bf_result)
                 break
             if len(agent.memory) > batch_size:
                 agent.replay(batch_size)
-        # if e % 10 == 0:
+        if e % 100 == 0:
+            wFile.write(str(model_result)+',' +str(bf_result)+','+str(r)+','+str(agent.epsilon)+'\n')
+            wFile.flush()
+
+    wFile.close()
+
         #     agent.save("./save/cartpole-dqn.h5")

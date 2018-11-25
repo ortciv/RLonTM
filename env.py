@@ -2,6 +2,8 @@ from Model import Model
 from Generation import Generation
 import random
 import copy
+from Scheduler import Scheduler
+import numpy as np
 class TMSimEnv:
 	def __init__(self):
 		self._partition_list = []
@@ -25,17 +27,19 @@ class TMSimEnv:
 
 	#initialize the simulation
 	def reset(self):
-		
-
 		g = Generation()
 		self._task_list =g.generate_tasks(self._total_af*self._load_ratio)
-		print 'Number of tasks:'+str(len(self._task_list))
+		#print 'Number of tasks:'+str(len(self._task_list))
 		tempP = copy.deepcopy(self._partition_list)
 		tempT = copy.deepcopy(self._task_list)
 		self. _model = Model()
 		return self._model.reset( tempT, tempP)
 
 	def step(self,action):
+		if action <0 or action>1:
+			action = -1
+		else:
+			action = int(action*self._action_size)
 		return self._model.step(action)
 
 	def get_state_size(self):
@@ -43,3 +47,26 @@ class TMSimEnv:
 
 	def get_action_size(self):
 		return self._action_size
+
+	def get_unit_ratio(self):
+		return self._model.get_unit_ratio()
+	def get_pro_ratio(self):
+		return self._model.get_pro_ratio()
+	def get_val_ratio(self):
+		return self._model.get_val_ratio()
+	def is_schedulable(self):
+		return self._model.is_schedulable()
+	def simulate_best_fit(self):
+		tl = copy.deepcopy(self._task_list)
+		pl = copy.deepcopy(self._partition_list)
+		m = Model()
+		m.reset(tl, pl)
+		s = Scheduler('best_fit')
+		for task in tl:
+			action = s.schedule(task, pl)
+			_,_,done,_ = m.step(action)
+			if done:
+				break
+		return m.get_unit_ratio()
+	def action_sample(self):
+		return np.random.rand()
