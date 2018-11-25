@@ -24,11 +24,11 @@ class TMSimEnv:
 			self._load_ratio = random.random() #generates a load_ratio smaller than 1, could be 0
 		self._state_size = len(partitions)+1
 		self._action_size = len(partitions)
-
-	#initialize the simulation
-	def reset(self):
 		g = Generation()
 		self._task_list =g.generate_tasks(self._total_af*self._load_ratio)
+	#initialize the simulation
+	def reset(self):
+
 		#print 'Number of tasks:'+str(len(self._task_list))
 		tempP = copy.deepcopy(self._partition_list)
 		tempT = copy.deepcopy(self._task_list)
@@ -36,10 +36,15 @@ class TMSimEnv:
 		return self._model.reset( tempT, tempP)
 
 	def step(self,action):
+		#print '++++++++++++++++++++++++++++++++++++++'
+		#print action
 		if action <0 or action>1:
 			action = -1
 		else:
+			action = action.item(0,0)
 			action = int(action*self._action_size)
+			#print 'Action now is:'+str(action)
+		#print 'Action now is:'+str(action)
 		return self._model.step(action)
 
 	def get_state_size(self):
@@ -69,4 +74,8 @@ class TMSimEnv:
 				break
 		return m.get_unit_ratio()
 	def action_sample(self):
-		return np.random.rand()
+		action = np.random.rand()
+		result = np.empty(shape=(1,1))
+		result[0] = action
+		#print result
+		return result

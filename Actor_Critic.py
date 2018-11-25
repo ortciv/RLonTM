@@ -131,8 +131,10 @@ class ActorCritic:
 			#action = np.array([action])
 			#action = np.atleast_2d(action)
 			#action = np.reshape(action,(self.action_size,))
-			print action
-			self.critic_model.fit([np.array(cur_state), action], reward, verbose=0)
+			cur_state = np.array(cur_state)
+			reward = np.array(reward)
+			reward = np.reshape(reward, (1,))
+			self.critic_model.fit([cur_state, action], reward, verbose=0)
 		
 	def train(self): #how to train
 		batch_size = 32
@@ -174,10 +176,8 @@ class ActorCritic:
 
 	def act(self, cur_state):
 		self.epsilon *= self.epsilon_decay
-		#if np.random.random() < self.epsilon:
-		#	return self.env.action_sample()
-		print '********************************'
-		print self.actor_model.predict(cur_state)
+		if np.random.random() < self.epsilon:
+			return self.env.action_sample()
 		return self.actor_model.predict(cur_state)
 
 def main():
@@ -201,11 +201,13 @@ def main():
 	while True:
 		cur_state = env.reset()
 		cur_state = np.reshape(cur_state, [1, state_size])
+		total_reward = 0
 		for time in range(500):
 			action = actor_critic.act(cur_state)
 			#action = np.reshape(action, [1, action_size])
 
 			new_state, reward, done, _ = env.step(action)
+			total_reward += reward
 			new_state = np.reshape(new_state, [1, state_size])
 
 			actor_critic.remember(cur_state, action, reward, new_state, done)
@@ -214,11 +216,12 @@ def main():
 			if done:
 				model_result = env.get_unit_ratio()
 				bf_result = env.simulate_best_fit()
-				output = str(counter)+', '+str(model_result)+', '+str(bf_result)
+				output = str(counter)+', '+str(total_reward)+', '+str(model_result)+', '+str(bf_result)+', '+str(actor_critic.epsilon)
 				print output
 				wFile.write(output+'\n')
 				wFile.flush()
 				counter += 1
+				break
 
 	wFile.close()
 if __name__ == "__main__":
