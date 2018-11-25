@@ -38,13 +38,16 @@ class TMSimEnv:
 	def step(self,action):
 		#print '++++++++++++++++++++++++++++++++++++++'
 		#print action
-		if action <0 or action>1:
-			action = -1
-		else:
-			action = action.item(0,0)
-			action = int(action*self._action_size)
-			#print 'Action now is:'+str(action)
-		#print 'Action now is:'+str(action)
+		# if action <0 or action>1:
+		# 	action = -1
+		# else:
+		# 	action = action.item(0,0)
+		# 	action = int(action*self._action_size)
+		# 	#print 'Action now is:'+str(action)
+		# #print 'Action now is:'+str(action)
+		# return self._model.step(action)
+		action = np.argmax(action)
+		action -= 1
 		return self._model.step(action)
 
 	def get_state_size(self):
@@ -74,8 +77,4 @@ class TMSimEnv:
 				break
 		return m.get_unit_ratio()
 	def action_sample(self):
-		action = np.random.rand()
-		result = np.empty(shape=(1,1))
-		result[0] = action
-		#print result
-		return result
+		return  np.random.rand(1, self._action_size+1)

@@ -77,13 +77,15 @@ class Model:
 
 	#accomplish the action, return the reward and continue the actions until next action required.
 	def step(self, action):
-		if action<0 or action>len(self._partition_list):
-			return self._state_now, -1, True, "Ends" #illegal inputs
 		task_now = self._task_list[self._task_counter]
+		if action<0 and self._scheduler.schedule(task_now, self._partition_list)<0:
+			return self._state_now, 1, True, "Ends" #proper ends
+		elif action<0 or action > len(self._partition_list):
+			return self._state_now, -5, True, "Ends" #illegal inputs
 
 		reward = 0
 		if self._partition_list[action]._af_remain < task_now._utilization:
-			reward = -5 #should we punish a non-fittable choice?
+			reward = -2 #should we punish a non-fittable choice?
 			message = "A non-fittable choice is made."
 			#print message
 			return self._state_now, reward, True, message

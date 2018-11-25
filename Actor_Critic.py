@@ -1,5 +1,7 @@
 """
-solving pendulum using actor-critic model
+Author: @Guangli Dai
+Applying Actor Critic Model on the task mapping problem
+Reference: The Actor-Critic part is quoted from https://towardsdatascience.com/reinforcement-learning-w-keras-openai-actor-critic-models-f084612cfd69
 """
 
 import gym
@@ -29,7 +31,7 @@ class ActorCritic:
 		self.gamma = .95
 		self.tau   = .125
 		self.state_size = env.get_state_size()
-		self.action_size = 1
+		self.action_size = env.get_action_size()+1 #0 is the end action
 
 		# ===================================================================== #
 		#                               Actor Model                             #
@@ -209,7 +211,8 @@ def main():
 			new_state, reward, done, _ = env.step(action)
 			total_reward += reward
 			new_state = np.reshape(new_state, [1, state_size])
-
+			if total_reward <= -200:
+				done = True
 			actor_critic.remember(cur_state, action, reward, new_state, done)
 			actor_critic.train()
 			cur_state = new_state
