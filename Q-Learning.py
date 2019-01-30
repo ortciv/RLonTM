@@ -70,7 +70,7 @@ if __name__ == "__main__":
     #     partition_list[i]=Partition(i, 0.2*(i+1))
     g = Generation()
     partition_list =g.generate_partitions(20)
-    print 'Number of partitions:'+str(len(partition_list))
+    print ('Number of partitions:'+str(len(partition_list)))
     env.make(partition_list, 0.6)
     state_size = env.get_state_size()
     action_size = env.get_action_size()
@@ -101,9 +101,9 @@ if __name__ == "__main__":
                 print("episode: {}/{}, score: {}, e: {:.5}"
                       .format(e, EPISODES, r, agent.epsilon))
                 model_result = env.get_unit_ratio()
-                print "Unit ratio provided by the model:"+str(model_result)
+                print ("Unit ratio provided by the model:"+str(model_result))
                 bf_result = env.simulate_best_fit()
-                print "Unit ratio provided by Best-Fit: "+str(bf_result)
+                print ("Unit ratio provided by Best-Fit: "+str(bf_result))
                 break
             if len(agent.memory) > batch_size:
                 agent.replay(batch_size)

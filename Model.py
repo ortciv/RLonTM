@@ -65,7 +65,7 @@ class Model:
 		while self._leaving_counter< len(self._to_leave_tasks) and self._to_leave_tasks[leaving_counter]._leaving == self._critical_time[self._time_now]:
 			task_now = self._to_leave_tasks[self._leaving_counter]
 			if task_now._id not in self._mapping:
-				print 'weird exception for'
+				print ('weird exception for')
 				leaving_counter += 1
 				continue
 			p_id = self._mapping[task_now._id]
@@ -128,70 +128,13 @@ class Model:
 
 
 	def run_model(self, log_flag = False):
-		#runs the simulation, each leaving time and arrival time will be a critical time spot to make decision or updates
-	        '''wFile = open("debug.txt",'a')	
-		for _,p in self._partition_list.items():
-			wFile.write(str(p._af_remain)+' ')
-		wFile.write('\n')
-		wFile.flush()'''
-		
-		#print len(self._partition_list)
-
-
-		
-
 		if log_flag:
 			logging.basicConfig(filename='mapping.log',level=logging.INFO)
 		done = False
 		while not done:
 			p_id = self._scheduler.schedule(self._task_list[self._task_counter], self._partition_list)
 			state,reward,done,message = self.step(p_id)
-		# task_counter = 0
-		# leaving_counter = 0
-		# for t in self._critical_time:
-		# 	#print 'time now is: '+str(t)
-		# 	#print type(self._partition_list)	
-		# 	while task_counter< len(self._task_list) and self._task_list[task_counter]._arrival == t:
-		# 		task_now = self._task_list[task_counter]
-		# 		self._total_util += task_now._utilization
-		# 		self._total_num += 1
-		# 		self._total_val += task_now._value
-		# 		p_id = self._scheduler.schedule(task_now, self._partition_list)#invoke schedulers to schedule the task now, if not allocated successfully, return -1
-				
-		# 		if p_id>=0:
-		# 			self._mapping[task_now._id] = p_id
-		# 			#print 'Outside scheduling:'+str(self._partition_list[p_id]._af_remain)
-		# 			self._partition_list[p_id]._af_remain -= task_now._utilization #update records and partition states
-		# 			#print 'Outside scheduling2:'+str(self._partition_list[p_id]._af_remain)
-		# 			#self._partition_list[p_id]._task_num += 1
-		# 			if log_flag:
-		# 				logging.info('Task '+str(task_now._id)+' is allocated to partition '+ str(p_id)+' at time '+str(t))
-		# 			if task_now._leaving>0:
-		# 				#print 'Leaving task: '+str(task_now._id)+' in: '+str(task_now._leaving)
-		# 				self._to_leave_tasks.append(task_now)
-		# 				self._to_leave_tasks.sort(key = lambda x: x._leaving)#append the task to leaving and resort it.
-		# 			self._sch_util += task_now._utilization
-		# 			self._sch_num += 1
-		# 			self._sch_val += task_now._value
-		# 		else:
-		# 			#if this task cannot be scheduled
-		# 			if log_flag:
-		# 				logging.info('Task '+str(task_now._id)+' is not schedulable')
-		# 			self._is_schedulable = False
-		# 		task_counter += 1
-		# 	#check the leaving time of tasks, update af_remain in partitions in time
-		# 	while leaving_counter< len(self._to_leave_tasks) and self._to_leave_tasks[leaving_counter]._leaving == t:
-		# 		task_now = self._to_leave_tasks[leaving_counter]
-		# 		if task_now._id not in self._mapping:
-		# 			print 'weird exception for'
-		# 			leaving_counter += 1
-		# 			continue
-		# 		p_id = self._mapping[task_now._id]
-		# 		#print '1: '+str(self._partition_list[p_id]._af_remain)
-		# 		self._partition_list[p_id]._af_remain += task_now._utilization
-		# 		#print '2: '+str(self._partition_list[p_id]._af_remain)
-		# 		#print 'task '+str(task_now._id)+'leaves from '+str(p_id)+'releasing '+str(task_now._utilization)+' at time '+str(t)
-		# 		leaving_counter += 1
+
 	def is_schedulable(self):
 		#returns whether last simulation is schedulable or not
 		return self._is_schedulable

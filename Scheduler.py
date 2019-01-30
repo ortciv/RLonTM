@@ -4,7 +4,7 @@ from Partition import Partition
 import logging
 
 def a(k):
-	print k
+	print (k)
 class Scheduler:
 
 	def __init__(self, scheduler_name):
