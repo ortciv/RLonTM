@@ -1,12 +1,8 @@
 # TaskMappingSimulation
 List of documents:
 
-- Partition.py:           Defines the data structure of partitions.
-- Task.py:                Defines the data structure of tasks.
-- Scheduler.py:           Intermediate class that can load scheduling policies.
-- SchedulingPolicies.py:  Class that holds all sorts of scheduling policies.
-- Model.py:               The main part of the simulation, can run the the simulation when settings are given.
-- env.py:                 The class that provides the environment for the reinforcement learning.
-- Q-Learning.py:          The main of the project. Applying Q-Learning on the environment provided for the task-mapping problem.
-
-Reference used for Q-Learning: https://keon.io/deep-q-learning/
+- old folder:                Unused files from previous repo.
+- Simple Classifer folder:   Simple Classifer model takes partition minus task as input and chooses best fit partition
+- .ipynb_checkpoints folder: Temp jupyter notebook files
+- SimpleKerasRegression:     Simple Regression model takes task and partition list as input and finds partition minus task as output
+- *-incomplete.ipynb:        Work in progress; may be buggy
