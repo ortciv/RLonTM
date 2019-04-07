@@ -1,0 +1,9 @@
+Policy Gradient and why it is not performing properly:
+1. Loss function: We always need a loss function which we can learn and thus find a good policy by the gradient of this function.
+Starting with a straightforward though: if an action gets a better reward, we increase its possibility. Hence, we use function: loss= -log(prob)*vt where vt is the reward and prob is the current possibility of the action. The key here is vt is not the instant reward, instead vt should include future reward as well.
+
+However, now the possibility returned by this model is somehow nan for some cases. This probably results from the loss function.
+
+2. Input of the model includes: obsercation, action and rewards, which is the same for our model. Each of them is put into the system after an episode.
+
+

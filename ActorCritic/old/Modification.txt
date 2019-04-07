@@ -1,0 +1,2 @@
+The result of Actor_Critic shows better sensitivity due to the advantage of the model.
+However, this leads the agent to a prudent exploration. Hence, when we set the value as we did in the Q-Learning, it dares not to try other options.

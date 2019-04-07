@@ -9,19 +9,18 @@ gym: 0.8.0
 python: python3
 """
 
-import gym
 from RL_brain import PolicyGradient
 import matplotlib.pyplot as plt
 
+from Model import *
+
 DISPLAY_REWARD_THRESHOLD = 400
-RENDER = False
 
-env = gym.make('CartPole-v0')
-env.seed(1)
-env = env.unwrapped
+env = Model(20, 0.6)
 
-n_actions = env.action_space.n
-n_features = env.observation_space.shape[0]
+
+n_actions = env.get_action_size()
+n_features = env.get_state_size()
 
 RL = PolicyGradient(
     n_actions=n_actions,
@@ -34,7 +33,6 @@ for i_episode in range(3000):
     observation = env.reset()
 
     while True:
-        if RENDER:env.render()
         action = RL.choose_action(observation)
 
         observation_,reward,done,info = env.step(action)
@@ -49,7 +47,6 @@ for i_episode in range(3000):
                 running_reward = ep_rs_sum
             else:
                 running_reward = running_reward * 0.99 + ep_rs_sum * 0.01
-            if running_reward > DISPLAY_REWARD_THRESHOLD: RENDER = True     # rendering
             print("episode:", i_episode, "  reward:", int(running_reward))
 
             vt = RL.learn()

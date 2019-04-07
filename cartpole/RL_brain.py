@@ -12,6 +12,7 @@ gym: 0.8.0
 import numpy as np
 import tensorflow as tf
 
+
 # reproducible
 np.random.seed(1)
 tf.set_random_seed(1)
@@ -81,7 +82,13 @@ class PolicyGradient:
 
 
     def choose_action(self,observation):
-        prob_weights = self.sess.run(self.all_act_prob,feed_dict={self.tf_obs:observation[np.newaxis,:]})
+        observation = np.array(observation)
+        temp = observation[np.newaxis,:]
+        print(temp)
+        prob_weights = self.sess.run(self.all_act_prob,feed_dict={self.tf_obs:temp})#model needs modification here because the model now will lead to nan, mainly because of the nan
+        print(prob_weights)
+        #print(type(observation))
+        #prob_weights = self.sess.run(self.all_act_prob,feed_dict={self.tf_obs:observation})
         action = np.random.choice(range(prob_weights.shape[1]),p=prob_weights.ravel())
         return action
 
@@ -108,11 +115,12 @@ class PolicyGradient:
 
     def _discount_and_norm_rewards(self):
         discounted_ep_rs = np.zeros_like(self.ep_rs)
+        discounted_ep_rs = discounted_ep_rs.astype(np.float)
         running_add = 0
-        # reserved 返回的是列表的反序，这样就得到了贴现求和值。
         for t in reversed(range(0,len(self.ep_rs))):
             running_add = running_add * self.gamma + self.ep_rs[t]
-            discounted_ep_rs[t] = running_add
+            discounted_ep_rs[t] = float(running_add)
+
 
         discounted_ep_rs -= np.mean(discounted_ep_rs)
         discounted_ep_rs /= np.std(discounted_ep_rs)
