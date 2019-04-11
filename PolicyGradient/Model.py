@@ -20,7 +20,8 @@ class Model:
 		self._load_ratio = load_ratio
 		self._bin_sum_size = bin_sum_size
 		g = Generation()
-		self._bin_set = g.generate_bins(bin_sum_size) #randomly generate a bin_set that does not change during the learning
+		#self._bin_set = g.generate_bins(bin_sum_size) #randomly generate a bin_set that does not change during the learning
+		self._bin_set, self._bin_sum_size = g.generate_n_bins(5)
 		self._item_set = []
 		self._state_now = []
 		self._item_counter = 0

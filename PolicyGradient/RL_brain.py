@@ -54,6 +54,7 @@ class PolicyGradient:
         # use keras layers for initial implementation
         # not sure how to incorporate previous model's learned weights
         # want to switch back to tf layers for more control
+        
         obs_input = Input(tensor=self.tf_obs, name='obs_input')
         d1 = Dense(1000, activation='relu', name='d1')(obs_input)
         bn1 = BatchNormalization()(d1)
@@ -72,6 +73,31 @@ class PolicyGradient:
              
         self.all_act_prob = tf.nn.softmax(all_act,name='act_prob')
         ### new model end
+        
+
+        ###sample model structure
+        '''
+        layer = tf.layers.dense(
+            inputs = self.tf_obs,
+            units = 10,
+            activation= tf.nn.tanh,
+            kernel_initializer=tf.random_normal_initializer(mean=0,stddev=0.3),
+            bias_initializer= tf.constant_initializer(0.1),
+            name='fc1'
+        )
+
+        all_act = tf.layers.dense(
+            inputs = layer,
+            units = self.n_actions,
+            activation = None,
+            kernel_initializer=tf.random_normal_initializer(mean=0,stddev=0.3),
+            bias_initializer = tf.constant_initializer(0.1),
+            name='fc2'
+        )
+
+        self.all_act_prob = tf.nn.softmax(all_act,name='act_prob')
+        '''
+        ### sampel model ends
 
         with tf.name_scope('loss'):#loss function is cross entropy
             #neg_log_prob = tf.nn.sparse_softmax_cross_entropy_with_logits(logits=self.all_act_prob,labels =self.tf_acts)

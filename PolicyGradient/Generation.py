@@ -31,7 +31,7 @@ class Generation:
 			  - target_util: Total size of the item set to reach.
 		'''
 		item_set =[]
-		sizes = self.gen_kato_utilizations(target_size,0, 1)#generate utilizations based on the number of tasks generated
+		sizes = self.gen_kato_utilizations(target_size,0.1, 1.5)#generate utilizations based on the number of tasks generated
 		num = len(sizes)
 		for i in range(num):
 			arrival = random.randint(0, self._max_time)
@@ -53,3 +53,14 @@ class Generation:
 			#print afs[i]
 			bin_set.append(bin_now)
 		return bin_set
+	def generate_n_bins(self,n):
+		target_size = 20
+		total_size = 0
+		bin_set = []
+		sizes = self.gen_kato_utilizations(target_size,1,5)
+		for i in range(n):
+			bin_now = Bin(i, sizes[i])
+			bin_set.append(bin_now)
+			total_size+= sizes[i]
+		return bin_set, total_size
+
