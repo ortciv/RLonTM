@@ -48,7 +48,7 @@ class Model:
 		self._item_counter += 1
 		reward = 0
 		if self._bin_set[action]._capacity < item_now._size:
-			reward = -5
+			reward = -10000
 			message = "A non-fittable chocie is made."
 			return self._state_now, reward, True, message
 		else:
